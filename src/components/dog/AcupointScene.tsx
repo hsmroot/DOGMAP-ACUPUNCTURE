@@ -3,6 +3,7 @@ import { OrbitControls, Line, ContactShadows, Html, Environment } from "@react-t
 import { Suspense, useMemo } from "react";
 import * as THREE from "three";
 import { DogBody } from "./DogBody";
+import { DogSkeleton } from "./DogSkeleton";
 import { MERIDIANS, ALL_POINTS, type FlatPoint } from "@/data/meridians";
 
 interface Props {
@@ -14,6 +15,7 @@ interface Props {
   bodyOpacity: number;
   showPaths: boolean;
   showLabels: boolean;
+  showSkeleton: boolean;
 }
 
 function PointMesh({
@@ -120,6 +122,7 @@ export function AcupointScene({
   bodyOpacity,
   showPaths,
   showLabels,
+  showSkeleton,
 }: Props) {
   const visible = useMemo(
     () => ALL_POINTS.filter((p) => activeIds.includes(p.meridianId)),
@@ -142,6 +145,7 @@ export function AcupointScene({
       </Suspense>
 
       <group position={[-0.2, -1.5, 0]}>
+        {showSkeleton && <DogSkeleton />}
         <DogBody opacity={bodyOpacity} />
         {showPaths && <MeridianPaths activeIds={activeIds} />}
         {visible.map((p) => (
