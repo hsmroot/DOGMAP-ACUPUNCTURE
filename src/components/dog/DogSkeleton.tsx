@@ -225,7 +225,7 @@ export function DogSkeleton({ opacity = 1 }: Props) {
 
         {/* ribcage */}
         {ribs.map((x, i) => (
-          <Rib key={`r${x}`} x={x} scale={i < 2 ? 0.82 : i > 6 ? 0.8 : 1} drop={i > 6 ? 0.16 : 0} />
+          <Rib key={`r${i}`} x={x} floating={i >= 10} />
         ))}
         <mesh geometry={sternumGeom} />
 
