@@ -27,7 +27,7 @@ function useIntestine(
 ) {
   return useMemo(() => {
     const pts: THREE.Vector3[] = [];
-    const steps = turns * 26;
+    const steps = Math.round(turns * 26);
     for (let i = 0; i <= steps; i++) {
       const t = i / steps;
       const a = t * Math.PI * 2 * turns;
