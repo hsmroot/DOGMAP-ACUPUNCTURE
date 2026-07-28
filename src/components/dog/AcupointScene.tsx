@@ -142,7 +142,7 @@ export function AcupointScene({
 
   return (
     <Canvas
-      camera={{ position: [6.6, 3.3, 13.2], fov: 40 }}
+      camera={{ position: [7.2, 3.2, 15.2], fov: 40 }}
       dpr={[1, 2]}
       onPointerMissed={() => onSelect(null)}
     >
@@ -155,7 +155,7 @@ export function AcupointScene({
         <Environment preset="studio" environmentIntensity={0.35} />
       </Suspense>
 
-      <group position={[-0.2, -1.5, 0]}>
+      <group position={[-0.45, -1.5, 0]}>
         {showSkeleton && <DogSkeleton />}
         {showOrgans && <DogOrgans />}
         {showMuscles && <DogMuscles opacity={showSkin ? 0.9 : 1} />}
