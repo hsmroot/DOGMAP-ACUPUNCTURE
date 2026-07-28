@@ -35,6 +35,7 @@ function Index() {
   const [bodyOpacity, setBodyOpacity] = useState(0.34);
   const [showSkeleton, setShowSkeleton] = useState(true);
   const [showOrgans, setShowOrgans] = useState(true);
+  const [showFur, setShowFur] = useState(false);
   const [showPaths, setShowPaths] = useState(true);
   const [showLabels, setShowLabels] = useState(false);
   const [query, setQuery] = useState("");
@@ -131,6 +132,24 @@ function Index() {
               Show organs
             </label>
             <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={showPaths}
+                onChange={(e) => setShowPaths(e.target.checked)}
+                className="accent-primary"
+              />
+              Show channel pathways
+            </label>
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={showFur}
+                onChange={(e) => setShowFur(e.target.checked)}
+                className="accent-primary"
+              />
+              Show fur coat
+            </label>
+            <label className="hidden items-center gap-2 text-sm">
               <input
                 type="checkbox"
                 checked={showPaths}
