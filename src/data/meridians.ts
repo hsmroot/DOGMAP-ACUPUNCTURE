@@ -1,4 +1,4 @@
-import { snapToSkin, trunkAt } from "@/components/dog/anatomy";
+import { snapToSkin } from "@/components/dog/anatomy";
 
 export type Vec3 = [number, number, number];
 
