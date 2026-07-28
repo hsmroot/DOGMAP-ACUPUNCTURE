@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useLayoutEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 
 interface Props {
@@ -91,14 +91,16 @@ function FurPatch({ region, density }: { region: Region; density: number }) {
     return arr;
   }, [count, region]);
 
-  return (
-    <instancedMesh
-      args={[geometry, material, count]}
-      // eslint-disable-next-line react/no-unknown-property
-      instanceMatrix-array={instances}
-      frustumCulled={false}
-    />
-  );
+  const ref = useRef<THREE.InstancedMesh>(null);
+  useLayoutEffect(() => {
+    const mesh = ref.current;
+    if (!mesh) return;
+    mesh.instanceMatrix.array.set(instances);
+    mesh.instanceMatrix.needsUpdate = true;
+    mesh.computeBoundingSphere();
+  }, [instances]);
+
+  return <instancedMesh ref={ref} args={[geometry, material, count]} frustumCulled={false} />;
 }
 
 /** Instanced strand coat layered over the dog's body. */
