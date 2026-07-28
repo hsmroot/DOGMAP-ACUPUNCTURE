@@ -32,7 +32,8 @@ function Index() {
   const [activeIds, setActiveIds] = useState<string[]>(MERIDIANS.map((m) => m.id));
   const [selected, setSelected] = useState<FlatPoint | null>(null);
   const [hovered, setHovered] = useState<FlatPoint | null>(null);
-  const [bodyOpacity, setBodyOpacity] = useState(0.92);
+  const [bodyOpacity, setBodyOpacity] = useState(0.34);
+  const [showSkeleton, setShowSkeleton] = useState(true);
   const [showPaths, setShowPaths] = useState(true);
   const [showLabels, setShowLabels] = useState(false);
   const [query, setQuery] = useState("");
@@ -113,6 +114,15 @@ function Index() {
             <label className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
+                checked={showSkeleton}
+                onChange={(e) => setShowSkeleton(e.target.checked)}
+                className="accent-primary"
+              />
+              Show skeleton
+            </label>
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
                 checked={showPaths}
                 onChange={(e) => setShowPaths(e.target.checked)}
                 className="accent-primary"
@@ -163,6 +173,7 @@ function Index() {
               bodyOpacity={bodyOpacity}
               showPaths={showPaths}
               showLabels={showLabels}
+              showSkeleton={showSkeleton}
             />
           </Suspense>
           <div className="pointer-events-none absolute bottom-3 left-4 rule-label">
