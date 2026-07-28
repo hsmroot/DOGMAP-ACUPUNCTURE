@@ -6,6 +6,7 @@ import { DogBody } from "./DogBody";
 import { DogSkeleton } from "./DogSkeleton";
 import { DogOrgans } from "./DogOrgans";
 import { DogFur } from "./DogFur";
+import { DogMuscles } from "./DogMuscles";
 import { MERIDIANS, ALL_POINTS, type FlatPoint } from "@/data/meridians";
 
 interface Props {
@@ -20,6 +21,8 @@ interface Props {
   showSkeleton: boolean;
   showOrgans: boolean;
   showFur: boolean;
+  showMuscles: boolean;
+  showSkin: boolean;
 }
 
 function PointMesh({
@@ -129,6 +132,8 @@ export function AcupointScene({
   showSkeleton,
   showOrgans,
   showFur,
+  showMuscles,
+  showSkin,
 }: Props) {
   const visible = useMemo(
     () => ALL_POINTS.filter((p) => activeIds.includes(p.meridianId)),
@@ -153,7 +158,8 @@ export function AcupointScene({
       <group position={[-0.2, -1.5, 0]}>
         {showSkeleton && <DogSkeleton />}
         {showOrgans && <DogOrgans />}
-        <DogBody opacity={bodyOpacity} />
+        {showMuscles && <DogMuscles opacity={showSkin ? 0.9 : 1} />}
+        {showSkin && <DogBody opacity={bodyOpacity} />}
         {showFur && <DogFur />}
         {showPaths && <MeridianPaths activeIds={activeIds} />}
         {visible.map((p) => (
