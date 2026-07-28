@@ -6,6 +6,7 @@ import { DogBody } from "./DogBody";
 import { DogSkeleton } from "./DogSkeleton";
 import { DogOrgans } from "./DogOrgans";
 import { DogFur } from "./DogFur";
+import { DogMuscles } from "./DogMuscles";
 import { MERIDIANS, ALL_POINTS, type FlatPoint } from "@/data/meridians";
 
 interface Props {
@@ -20,6 +21,8 @@ interface Props {
   showSkeleton: boolean;
   showOrgans: boolean;
   showFur: boolean;
+  showMuscles: boolean;
+  showSkin: boolean;
 }
 
 function PointMesh({
@@ -129,6 +132,8 @@ export function AcupointScene({
   showSkeleton,
   showOrgans,
   showFur,
+  showMuscles,
+  showSkin,
 }: Props) {
   const visible = useMemo(
     () => ALL_POINTS.filter((p) => activeIds.includes(p.meridianId)),
@@ -137,7 +142,7 @@ export function AcupointScene({
 
   return (
     <Canvas
-      camera={{ position: [6.6, 3.3, 13.2], fov: 40 }}
+      camera={{ position: [7.6, 3.2, 16.4], fov: 40 }}
       dpr={[1, 2]}
       onPointerMissed={() => onSelect(null)}
     >
@@ -150,10 +155,11 @@ export function AcupointScene({
         <Environment preset="studio" environmentIntensity={0.35} />
       </Suspense>
 
-      <group position={[-0.2, -1.5, 0]}>
+      <group position={[-0.45, -1.5, 0]}>
         {showSkeleton && <DogSkeleton />}
         {showOrgans && <DogOrgans />}
-        <DogBody opacity={bodyOpacity} />
+        {showMuscles && <DogMuscles opacity={showSkin ? 0.9 : 1} />}
+        {showSkin && <DogBody opacity={bodyOpacity} />}
         {showFur && <DogFur />}
         {showPaths && <MeridianPaths activeIds={activeIds} />}
         {visible.map((p) => (

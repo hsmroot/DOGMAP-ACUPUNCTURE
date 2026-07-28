@@ -1,3 +1,5 @@
+import { snapToSkin } from "@/components/dog/anatomy";
+
 export type Vec3 = [number, number, number];
 
 export interface AcuPoint {
@@ -327,6 +329,20 @@ export interface FlatPoint extends AcuPoint {
   key: string;
 }
 
+/**
+ * Points that lie on the trunk (dorsal spine line, costal arch, ventral
+ * midline). These are projected onto the dog's actual skin so they sit exactly
+ * over the vertebrae and intercostal spaces instead of floating.
+ */
+const SURFACE_CODES = new Set([
+  "BL 11", "BL 13", "BL 14", "BL 15", "BL 17", "BL 18", "BL 19", "BL 20",
+  "BL 21", "BL 22", "BL 23", "BL 25", "BL 27", "BL 28",
+  "GV 4", "GV 14", "Bai Hui", "Wei Jian",
+  "GB 21", "GB 25", "GB 29", "GB 30",
+  "LIV 13", "LIV 14", "SP 21", "ST 25", "PC 1", "LU 1", "SI 9", "TH 14", "LI 16",
+  "KI 27", "CV 4", "CV 8", "CV 12", "CV 17",
+]);
+
 export const ALL_POINTS: FlatPoint[] = MERIDIANS.flatMap((m) =>
   m.points.flatMap((p): FlatPoint[] => {
     const base = {
@@ -336,10 +352,11 @@ export const ALL_POINTS: FlatPoint[] = MERIDIANS.flatMap((m) =>
       meridianCode: m.code,
       color: m.color,
     };
+    const pos = SURFACE_CODES.has(p.code) ? snapToSkin(p.pos) : p.pos;
     if (p.midline) {
-      return [{ ...base, side: "M" as const, key: `${m.id}-${p.code}-M` }];
+      return [{ ...base, pos, side: "M" as const, key: `${m.id}-${p.code}-M` }];
     }
-    const [x, y, z] = p.pos;
+    const [x, y, z] = pos;
     return [
       { ...base, side: "R" as const, key: `${m.id}-${p.code}-R`, pos: [x, y, z] as Vec3 },
       { ...base, side: "L" as const, key: `${m.id}-${p.code}-L`, pos: [x, y, -z] as Vec3 },

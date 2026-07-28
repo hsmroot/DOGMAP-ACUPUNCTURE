@@ -1,5 +1,6 @@
 import { useLayoutEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
+import { trunkAt } from "./anatomy";
 
 interface Props {
   opacity?: number;
@@ -29,22 +30,16 @@ function Bone({
   );
 }
 
-function Rib({
-  x,
-  scale,
-  drop,
-}: {
-  x: number;
-  scale: number;
-  drop: number;
-}) {
+/** Rib that hugs the real trunk cross-section at its own station. */
+function Rib({ x, floating }: { x: number; floating: boolean }) {
+  const s = trunkAt(x);
   const half = (sign: number) =>
     [
-      [x, 1.95, 0.05 * sign],
-      [x, 1.86, 0.42 * scale * sign],
-      [x - 0.05, 1.55, 0.52 * scale * sign],
-      [x - 0.08, 1.22 + drop, 0.34 * scale * sign],
-      [x - 0.08, 1.1 + drop, 0.08 * sign],
+      [x, s.cy + s.ry - 0.07, 0.05 * sign],
+      [x, s.cy + s.ry * 0.6, s.rz * 0.62 * sign],
+      [x - 0.04, s.cy, s.rz * 0.85 * sign],
+      [x - 0.09, s.cy - s.ry * 0.6, s.rz * (floating ? 0.72 : 0.6) * sign],
+      [x - 0.13, s.cy - s.ry + (floating ? 0.22 : 0.1), (floating ? 0.3 : 0.12) * sign],
     ] as [number, number, number][];
 
   return (
@@ -183,17 +178,15 @@ export function DogSkeleton({ opacity = 1 }: Props) {
   );
 
   const sternumGeom = useTube(
-    [
-      [1.42, 1.12, 0],
-      [1.0, 1.05, 0],
-      [0.55, 1.06, 0],
-      [0.2, 1.12, 0],
-    ],
+    [1.45, 1.15, 0.85, 0.55, 0.3].map(
+      (x) => [x, trunkAt(x).cy - trunkAt(x).ry + 0.1, 0] as [number, number, number],
+    ),
     0.045,
     8,
   );
 
-  const ribs = [1.2, 0.95, 0.7, 0.45, 0.2, -0.05, -0.3, -0.55, -0.8];
+  // 13 pairs of ribs, T1 → T13, matching canine anatomy
+  const ribs = Array.from({ length: 13 }, (_, i) => 1.3 - i * 0.1375);
 
   const legBones = (
     x: number,
@@ -232,7 +225,7 @@ export function DogSkeleton({ opacity = 1 }: Props) {
 
         {/* ribcage */}
         {ribs.map((x, i) => (
-          <Rib key={`r${x}`} x={x} scale={i < 2 ? 0.82 : i > 6 ? 0.8 : 1} drop={i > 6 ? 0.16 : 0} />
+          <Rib key={`r${i}`} x={x} floating={i >= 10} />
         ))}
         <mesh geometry={sternumGeom} />
 
