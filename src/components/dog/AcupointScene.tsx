@@ -131,7 +131,7 @@ export function AcupointScene({
 
   return (
     <Canvas
-      camera={{ position: [5.2, 2.6, 9.2], fov: 40 }}
+      camera={{ position: [6.2, 3.2, 11.5], fov: 40 }}
       dpr={[1, 2]}
       onPointerMissed={() => onSelect(null)}
     >
@@ -168,7 +168,7 @@ export function AcupointScene({
         makeDefault
         target={[0, 0.15, 0]}
         enablePan={false}
-        minDistance={3.5}
+        minDistance={4.5}
         maxDistance={18}
         maxPolarAngle={Math.PI / 1.9}
         autoRotate={!selected}
