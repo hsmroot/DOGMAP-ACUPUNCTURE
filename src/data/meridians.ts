@@ -1,3 +1,5 @@
+import { snapToSkin, trunkAt } from "@/components/dog/anatomy";
+
 export type Vec3 = [number, number, number];
 
 export interface AcuPoint {
