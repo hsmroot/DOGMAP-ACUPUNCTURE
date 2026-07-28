@@ -1,115 +1,139 @@
 import { useLayoutEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
+import { TRUNK, trunkAt, trunkSurface } from "./anatomy";
 
 interface Props {
-  /** 0..1 — how dense/long the coat is */
   density?: number;
 }
 
-type Region = {
-  /** ellipsoid centre */
-  c: [number, number, number];
-  /** ellipsoid radii */
-  r: [number, number, number];
-  /** number of strands */
-  n: number;
-  len: number;
-  color: string;
-};
+const DORSAL = new THREE.Color("#a97b47");
+const VENTRAL = new THREE.Color("#e7d7bb");
 
-/** Body regions roughly matching DogBody's silhouette. */
-const REGIONS: Region[] = [
-  { c: [0.15, 1.5, 0], r: [1.6, 0.56, 0.56], n: 2600, len: 0.085, color: "#c9a274" },
-  { c: [1.15, 1.42, 0], r: [0.62, 0.66, 0.55], n: 900, len: 0.085, color: "#c9a274" },
-  { c: [-1.15, 1.55, 0], r: [0.64, 0.65, 0.6], n: 900, len: 0.095, color: "#c9a274" },
-  { c: [1.98, 2.0, 0], r: [0.5, 0.42, 0.34], n: 700, len: 0.110, color: "#b8905f" },
-  { c: [2.72, 2.42, 0], r: [0.44, 0.38, 0.36], n: 420, len: 0.050, color: "#c9a274" },
-  { c: [-2.35, 2.05, 0], r: [0.55, 0.45, 0.14], n: 520, len: 0.110, color: "#b8905f" },
-  // limbs
-  { c: [1.26, 1.16, 0.42], r: [0.2, 0.34, 0.2], n: 230, len: 0.060, color: "#c9a274" },
-  { c: [1.26, 1.16, -0.42], r: [0.2, 0.34, 0.2], n: 230, len: 0.060, color: "#c9a274" },
-  { c: [-1.22, 1.2, 0.42], r: [0.22, 0.36, 0.22], n: 250, len: 0.065, color: "#c9a274" },
-  { c: [-1.22, 1.2, -0.42], r: [0.22, 0.36, 0.22], n: 250, len: 0.065, color: "#c9a274" },
-  { c: [1.3, 0.72, 0.44], r: [0.14, 0.26, 0.14], n: 140, len: 0.045, color: "#c9a274" },
-  { c: [1.3, 0.72, -0.44], r: [0.14, 0.26, 0.14], n: 140, len: 0.045, color: "#c9a274" },
-  { c: [-1.3, 0.74, 0.42], r: [0.14, 0.26, 0.14], n: 140, len: 0.045, color: "#c9a274" },
-  { c: [-1.3, 0.74, -0.42], r: [0.14, 0.26, 0.14], n: 140, len: 0.045, color: "#c9a274" },
-];
-
-function seeded(i: number) {
-  const x = Math.sin(i * 127.1 + 311.7) * 43758.5453;
+function rnd(i: number, s: number) {
+  const x = Math.sin(i * 127.1 + s * 311.7) * 43758.5453;
   return x - Math.floor(x);
 }
 
-function FurPatch({ region, density }: { region: Region; density: number }) {
-  const count = Math.max(1, Math.round(region.n * density));
+interface Strand {
+  p: THREE.Vector3;
+  n: THREE.Vector3;
+  len: number;
+  c: THREE.Color;
+}
 
-  const { geometry, material } = useMemo(() => {
-    const g = new THREE.ConeGeometry(0.008, 1, 4, 1, true);
-    g.translate(0, 0.5, 0); // pivot at root
-    const m = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(region.color),
-      roughness: 0.95,
-      metalness: 0,
-      side: THREE.DoubleSide,
+function trunkStrands(count: number): Strand[] {
+  const out: Strand[] = [];
+  const xMin = TRUNK[TRUNK.length - 1].x;
+  const xMax = TRUNK[0].x;
+  for (let i = 0; i < count; i++) {
+    const x = xMin + rnd(i, 1) * (xMax - xMin);
+    const theta = rnd(i, 2) * Math.PI * 2;
+    const s = trunkAt(x);
+    const p = trunkSurface(x, theta, -0.01);
+    const n = new THREE.Vector3(0, Math.cos(theta) / s.ry, Math.sin(theta) / s.rz).normalize();
+    const t = (1 - Math.cos(theta)) / 2;
+    out.push({
+      p: new THREE.Vector3(...p),
+      n,
+      len: 0.075 + rnd(i, 3) * 0.05,
+      c: DORSAL.clone().lerp(VENTRAL, Math.pow(t, 1.7)),
     });
-    return { geometry: g, material: m };
-  }, [region.color]);
+  }
+  return out;
+}
 
-  const instances = useMemo(() => {
-    const arr = new Float32Array(count * 16);
-    const dummy = new THREE.Object3D();
-    const up = new THREE.Vector3(0, 1, 0);
-    const q = new THREE.Quaternion();
-    const normal = new THREE.Vector3();
-    const [cx, cy, cz] = region.c;
-    const [rx, ry, rz] = region.r;
+function blobStrands(
+  count: number,
+  c: [number, number, number],
+  r: [number, number, number],
+  len: number,
+  seed: number,
+  color: THREE.Color,
+): Strand[] {
+  const out: Strand[] = [];
+  for (let i = 0; i < count; i++) {
+    const u = rnd(i + seed, 5);
+    const v = rnd(i + seed, 7);
+    const theta = 2 * Math.PI * u;
+    const phi = Math.acos(2 * v - 1);
+    const sx = Math.sin(phi) * Math.cos(theta);
+    const sy = Math.cos(phi);
+    const sz = Math.sin(phi) * Math.sin(theta);
+    out.push({
+      p: new THREE.Vector3(c[0] + sx * r[0], c[1] + sy * r[1], c[2] + sz * r[2]),
+      n: new THREE.Vector3(sx / r[0], sy / r[1], sz / r[2]).normalize(),
+      len: len * (0.7 + rnd(i + seed, 9) * 0.6),
+      c: color,
+    });
+  }
+  return out;
+}
 
-    for (let i = 0; i < count; i++) {
-      // even-ish sphere sampling
-      const u = seeded(i * 3 + 1);
-      const v = seeded(i * 3 + 2);
-      const theta = 2 * Math.PI * u;
-      const phi = Math.acos(2 * v - 1);
-      const sx = Math.sin(phi) * Math.cos(theta);
-      const sy = Math.cos(phi);
-      const sz = Math.sin(phi) * Math.sin(theta);
+/** Instanced hair coat that follows the dog's actual surface. */
+export function DogFur({ density = 1 }: Props) {
+  const strands = useMemo(() => {
+    const s: Strand[] = [
+      ...trunkStrands(6000),
+      // neck & head
+      ...blobStrands(700, [2.3, 2.02, 0], [0.42, 0.34, 0.28], 0.09, 11, DORSAL),
+      ...blobStrands(500, [2.76, 2.44, 0], [0.38, 0.33, 0.32], 0.05, 23, DORSAL),
+      // limbs
+      ...blobStrands(400, [1.32, 1.38, 0.4], [0.22, 0.4, 0.22], 0.07, 31, DORSAL),
+      ...blobStrands(400, [1.32, 1.38, -0.4], [0.22, 0.4, 0.22], 0.07, 37, DORSAL),
+      ...blobStrands(450, [-1.15, 1.35, 0.4], [0.28, 0.42, 0.28], 0.08, 41, DORSAL),
+      ...blobStrands(450, [-1.15, 1.35, -0.4], [0.28, 0.42, 0.28], 0.08, 43, DORSAL),
+      ...blobStrands(200, [1.3, 0.75, 0.4], [0.11, 0.28, 0.11], 0.05, 47, DORSAL),
+      ...blobStrands(200, [1.3, 0.75, -0.4], [0.11, 0.28, 0.11], 0.05, 53, DORSAL),
+      ...blobStrands(200, [-1.3, 0.72, 0.4], [0.11, 0.28, 0.11], 0.05, 59, DORSAL),
+      ...blobStrands(200, [-1.3, 0.72, -0.4], [0.11, 0.28, 0.11], 0.05, 61, DORSAL),
+      // tail plume
+      ...blobStrands(500, [-2.3, 1.92, 0], [0.5, 0.36, 0.12], 0.11, 67, DORSAL),
+    ];
+    return s;
+  }, []);
 
-      dummy.position.set(cx + sx * rx, cy + sy * ry, cz + sz * rz);
-      normal.set(sx / rx, sy / ry, sz / rz).normalize();
-      // sweep strands slightly toward the tail
-      normal.x -= 0.45;
-      normal.normalize();
-      q.setFromUnitVectors(up, normal);
-      dummy.quaternion.copy(q);
+  const count = Math.max(1, Math.round(strands.length * density));
 
-      const jitter = 0.65 + seeded(i * 3 + 3) * 0.7;
-      dummy.scale.set(1, region.len * jitter, 1);
-      dummy.updateMatrix();
-      dummy.matrix.toArray(arr, i * 16);
-    }
-    return arr;
-  }, [count, region]);
+  const geometry = useMemo(() => {
+    const g = new THREE.ConeGeometry(0.007, 1, 4, 1, true);
+    g.translate(0, 0.5, 0);
+    return g;
+  }, []);
+
+  const material = useMemo(
+    () =>
+      new THREE.MeshStandardMaterial({
+        vertexColors: true,
+        roughness: 0.96,
+        metalness: 0,
+        side: THREE.DoubleSide,
+      }),
+    [],
+  );
 
   const ref = useRef<THREE.InstancedMesh>(null);
   useLayoutEffect(() => {
     const mesh = ref.current;
     if (!mesh) return;
-    mesh.instanceMatrix.array.set(instances);
+    const dummy = new THREE.Object3D();
+    const up = new THREE.Vector3(0, 1, 0);
+    const dir = new THREE.Vector3();
+    for (let i = 0; i < count; i++) {
+      const s = strands[i];
+      dummy.position.copy(s.p);
+      dir.copy(s.n);
+      dir.x -= 0.4; // sweep the coat toward the tail
+      dir.normalize();
+      dummy.quaternion.setFromUnitVectors(up, dir);
+      dummy.scale.set(1, s.len, 1);
+      dummy.updateMatrix();
+      mesh.setMatrixAt(i, dummy.matrix);
+      mesh.setColorAt(i, s.c);
+    }
     mesh.instanceMatrix.needsUpdate = true;
+    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
     mesh.computeBoundingSphere();
-  }, [instances]);
+  }, [strands, count]);
 
   return <instancedMesh ref={ref} args={[geometry, material, count]} frustumCulled={false} />;
-}
-
-/** Instanced strand coat layered over the dog's body. */
-export function DogFur({ density = 1 }: Props) {
-  return (
-    <group>
-      {REGIONS.map((r, i) => (
-        <FurPatch key={i} region={r} density={density} />
-      ))}
-    </group>
-  );
 }
