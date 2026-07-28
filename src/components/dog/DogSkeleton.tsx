@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useLayoutEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 
 interface Props {
@@ -139,20 +139,17 @@ export function DogSkeleton({ opacity = 1 }: Props) {
     </group>
   );
 
+  const root = useRef<THREE.Group>(null);
+  useLayoutEffect(() => {
+    root.current?.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (m.isMesh) m.material = boneMat;
+    });
+  });
+
   return (
     <group>
-      <group>
-        {/* apply shared material to every child mesh */}
-        <primitive object={boneMat} attach="__ignored" visible={false} />
-      </group>
-      <group
-        onUpdate={(g: THREE.Group) =>
-          g.traverse((o) => {
-            const m = o as THREE.Mesh;
-            if (m.isMesh) m.material = boneMat;
-          })
-        }
-      >
+      <group ref={root}>
         {/* spine */}
         <mesh geometry={spineGeom} />
         {spinePts.slice(1, -1).map((p, i) => (
