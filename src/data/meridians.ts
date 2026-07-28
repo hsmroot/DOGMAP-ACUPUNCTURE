@@ -328,7 +328,7 @@ export interface FlatPoint extends AcuPoint {
 }
 
 export const ALL_POINTS: FlatPoint[] = MERIDIANS.flatMap((m) =>
-  m.points.flatMap((p) => {
+  m.points.flatMap((p): FlatPoint[] => {
     const base = {
       ...p,
       meridianId: m.id,
