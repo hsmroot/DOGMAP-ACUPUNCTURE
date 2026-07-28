@@ -337,20 +337,11 @@ export interface FlatPoint extends AcuPoint {
 const SURFACE_CODES = new Set([
   "BL 11", "BL 13", "BL 14", "BL 15", "BL 17", "BL 18", "BL 19", "BL 20",
   "BL 21", "BL 22", "BL 23", "BL 25", "BL 27", "BL 28",
-  "GV 1", "GV 4", "GV 14", "Bai Hui", "Wei Jian",
+  "GV 4", "GV 14", "Bai Hui", "Wei Jian",
   "GB 21", "GB 25", "GB 29", "GB 30",
   "LIV 13", "LIV 14", "SP 21", "ST 25", "PC 1", "LU 1", "SI 9", "TH 14", "LI 16",
-  "KI 27", "CV 1", "CV 4", "CV 8", "CV 12", "CV 17",
+  "KI 27", "CV 4", "CV 8", "CV 12", "CV 17",
 ]);
-
-interface _Unused {
-  meridianId: string;
-  meridianName: string;
-  meridianCode: string;
-  color: string;
-  side: "L" | "R" | "M";
-  key: string;
-}
 
 export const ALL_POINTS: FlatPoint[] = MERIDIANS.flatMap((m) =>
   m.points.flatMap((p): FlatPoint[] => {
