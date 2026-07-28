@@ -142,7 +142,7 @@ export function AcupointScene({
 
   return (
     <Canvas
-      camera={{ position: [7.2, 3.2, 15.2], fov: 40 }}
+      camera={{ position: [7.6, 3.2, 16.4], fov: 40 }}
       dpr={[1, 2]}
       onPointerMissed={() => onSelect(null)}
     >
