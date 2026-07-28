@@ -149,15 +149,6 @@ function Index() {
               />
               Show fur coat
             </label>
-            <label className="hidden items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={showPaths}
-                onChange={(e) => setShowPaths(e.target.checked)}
-                className="accent-primary"
-              />
-              Show channel pathways
-            </label>
             <label className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
@@ -203,6 +194,7 @@ function Index() {
               showPaths={showPaths}
               showLabels={showLabels}
               showSkeleton={showSkeleton}
+              showFur={showFur}
               showOrgans={showOrgans}
             />
           </Suspense>
