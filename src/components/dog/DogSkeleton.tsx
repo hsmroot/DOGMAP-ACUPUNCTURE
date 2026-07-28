@@ -91,22 +91,80 @@ export function DogSkeleton({ opacity = 1 }: Props) {
     [opacity],
   );
 
-  // thoraco-lumbar + cervical + caudal spine
+  /**
+   * One continuous vertebral column: skull base → 7 cervical → 13 thoracic →
+   * 7 lumbar → sacrum → 12 caudal (tail) vertebrae.
+   */
   const spinePts: [number, number, number][] = [
-    [-2.7, 2.2, 0],
-    [-2.25, 1.9, 0],
-    [-1.85, 1.86, 0],
-    [-1.4, 1.98, 0],
-    [-0.8, 2.02, 0],
-    [0, 2.0, 0],
-    [0.8, 1.98, 0],
-    [1.35, 1.98, 0],
-    [1.75, 2.1, 0],
-    [2.05, 2.32, 0],
-    [2.35, 2.5, 0],
-    [2.6, 2.52, 0],
+    // cervical (atlas at the skull, curving down into the withers)
+    [2.62, 2.5, 0],
+    [2.4, 2.46, 0],
+    [2.2, 2.36, 0],
+    [2.02, 2.24, 0],
+    [1.86, 2.12, 0],
+    [1.7, 2.03, 0],
+    [1.55, 1.99, 0],
+    // thoracic
+    [1.35, 1.99, 0],
+    [1.1, 2.01, 0],
+    [0.85, 2.01, 0],
+    [0.6, 2.0, 0],
+    [0.35, 2.0, 0],
+    [0.1, 2.0, 0],
+    [-0.15, 2.0, 0],
+    [-0.4, 2.0, 0],
+    // lumbar
+    [-0.65, 2.01, 0],
+    [-0.9, 2.02, 0],
+    [-1.15, 2.02, 0],
+    [-1.4, 2.0, 0],
+    // sacrum
+    [-1.62, 1.96, 0],
+    [-1.82, 1.9, 0],
+    // caudal / tail
+    [-2.02, 1.84, 0],
+    [-2.24, 1.86, 0],
+    [-2.44, 1.98, 0],
+    [-2.6, 2.16, 0],
+    [-2.74, 2.36, 0],
+    [-2.86, 2.52, 0],
   ];
-  const spineGeom = useTube(spinePts, 0.075, 10);
+  const spineGeom = useMemo(() => {
+    const curve = new THREE.CatmullRomCurve3(spinePts.map((p) => new THREE.Vector3(...p)));
+    // taper the cord from neck to tail tip
+    const steps = 220;
+    const geo = new THREE.TubeGeometry(curve, steps, 1, 10, false);
+    const pos = geo.attributes.position as THREE.BufferAttribute;
+    const center = new THREE.Vector3();
+    for (let i = 0; i <= steps; i++) {
+      const t = i / steps;
+      const r = t < 0.72 ? 0.075 - 0.012 * t : 0.06 * (1 - (t - 0.72) / 0.28) + 0.014;
+      curve.getPoint(t, center);
+      for (let j = 0; j <= 10; j++) {
+        const idx = i * 11 + j;
+        const v = new THREE.Vector3().fromBufferAttribute(pos, idx);
+        v.sub(center).multiplyScalar(r).add(center);
+        pos.setXYZ(idx, v.x, v.y, v.z);
+      }
+    }
+    pos.needsUpdate = true;
+    geo.computeVertexNormals();
+    return geo;
+  }, []);
+
+  // one vertebra body per landmark, with a spinous process that is tallest
+  // over the withers and fades out along the tail
+  const vertebrae = useMemo(
+    () =>
+      spinePts.map((p, i) => {
+        const t = i / (spinePts.length - 1);
+        const tail = i >= 21;
+        const r = tail ? 0.055 * (1 - (i - 21) / 8) + 0.02 : 0.085 - 0.012 * t;
+        const spine = tail ? 0 : i < 7 ? 0.07 : i < 11 ? 0.24 - (i - 7) * 0.02 : 0.15;
+        return { p, r, spine };
+      }),
+    [],
+  );
 
   const sternumGeom = useTube(
     [
