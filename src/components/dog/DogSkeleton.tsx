@@ -60,16 +60,32 @@ function RibArc({ pts }: { pts: [number, number, number][] }) {
   return <mesh geometry={geom} />;
 }
 
-function Vertebra({ x, y, r }: { x: number; y: number; r: number }) {
+function Vertebra({
+  pos,
+  r,
+  spine,
+}: {
+  pos: [number, number, number];
+  r: number;
+  spine: number;
+}) {
   return (
-    <group position={[x, y, 0]}>
+    <group position={pos}>
       <mesh>
         <sphereGeometry args={[r, 12, 10]} />
       </mesh>
+      {/* transverse processes */}
+      {[1, -1].map((s) => (
+        <mesh key={s} position={[0, 0, s * (r + 0.03)]} rotation={[Math.PI / 2, 0, 0]}>
+          <boxGeometry args={[0.045, 0.07, 0.035]} />
+        </mesh>
+      ))}
       {/* dorsal spinous process */}
-      <mesh position={[0, r + 0.05, 0]} rotation={[0, 0, 0.12]}>
-        <boxGeometry args={[0.05, 0.14, 0.05]} />
-      </mesh>
+      {spine > 0 && (
+        <mesh position={[0, r + spine / 2, 0]} rotation={[0, 0, 0.16]}>
+          <boxGeometry args={[0.05, spine, 0.045]} />
+        </mesh>
+      )}
     </group>
   );
 }
