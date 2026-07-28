@@ -5,6 +5,11 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
+ * "Clinical Atlas" — ink-black studio, bone-parchment anatomy,
+ * cinnabar/jade accents borrowed from classical meridian charts.
+ */
+
+/*
  * Design system definition.
  *
  * The @theme inline block maps CSS custom properties to Tailwind utility
@@ -62,26 +67,29 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
+  --radius: 0.35rem;
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body: "Spectral", Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --background: oklch(0.17 0.008 70);
+  --foreground: oklch(0.93 0.015 80);
+  --card: oklch(0.213 0.009 70);
+  --card-foreground: oklch(0.93 0.015 80);
+  --popover: oklch(0.213 0.009 70);
+  --popover-foreground: oklch(0.93 0.015 80);
+  --primary: oklch(0.72 0.16 55);
+  --primary-foreground: oklch(0.17 0.02 60);
+  --secondary: oklch(0.27 0.012 70);
+  --secondary-foreground: oklch(0.93 0.015 80);
+  --muted: oklch(0.25 0.01 70);
+  --muted-foreground: oklch(0.68 0.018 75);
+  --accent: oklch(0.62 0.11 165);
+  --accent-foreground: oklch(0.15 0.02 165);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
+  --border: oklch(0.3 0.012 70);
+  --input: oklch(0.3 0.012 70);
+  --ring: oklch(0.72 0.16 55);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -140,5 +148,35 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+  }
+}
+
+@layer components {
+  .point-tag {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    padding: 1px 4px;
+    border-radius: 3px;
+    border: 1px solid;
+    background: oklch(0.17 0.008 70 / 0.85);
+    color: oklch(0.95 0.01 80);
+    white-space: nowrap;
+  }
+
+  .rule-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-muted-foreground);
   }
 }
