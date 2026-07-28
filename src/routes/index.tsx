@@ -150,7 +150,7 @@ function Index() {
                 onChange={(e) => setShowSkeleton(e.target.checked)}
                 className="accent-primary"
               />
-              Show skeleton
+              Skeleton
             </label>
             <label className="flex items-center gap-2 text-sm">
               <input
@@ -159,8 +159,9 @@ function Index() {
                 onChange={(e) => setShowOrgans(e.target.checked)}
                 className="accent-primary"
               />
-              Show organs
+              Organs &amp; viscera
             </label>
+            <p className="rule-label pt-2">Meridian overlay</p>
             <label className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
@@ -169,15 +170,6 @@ function Index() {
                 className="accent-primary"
               />
               Show channel pathways
-            </label>
-            <label className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={showFur}
-                onChange={(e) => setShowFur(e.target.checked)}
-                className="accent-primary"
-              />
-              Show fur coat
             </label>
             <label className="flex items-center gap-2 text-sm">
               <input
@@ -226,6 +218,8 @@ function Index() {
               showSkeleton={showSkeleton}
               showFur={showFur}
               showOrgans={showOrgans}
+              showMuscles={showMuscles}
+              showSkin={showSkin}
             />
           </Suspense>
           <div className="pointer-events-none absolute bottom-3 left-4 rule-label">
