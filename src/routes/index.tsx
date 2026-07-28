@@ -19,7 +19,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "An interactive three-dimensional canine meridian chart with named acupressure points and their indications.",
+          "Rotate a 3D dog and explore every acupressure point: 14 meridians, named points, locations and indications from classical TCVM charts.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

@@ -77,14 +77,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "Canine Acupressure Atlas — Interactive 3D Meridian Model" },
+      { name: "description", content: "Rotate a 3D dog and explore every acupressure point: 14 meridians, named points, locations and indications from classical TCVM charts." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "Canine Acupressure Atlas — Interactive 3D Meridian Model" },
+      { property: "og:description", content: "Rotate a 3D dog and explore every acupressure point: 14 meridians, named points, locations and indications from classical TCVM charts." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Canine Acupressure Atlas — Interactive 3D Meridian Model" },
+      { name: "twitter:description", content: "Rotate a 3D dog and explore every acupressure point: 14 meridians, named points, locations and indications from classical TCVM charts." },
     ],
     links: [
       {
