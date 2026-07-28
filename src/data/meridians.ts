@@ -338,10 +338,11 @@ export const ALL_POINTS: FlatPoint[] = MERIDIANS.flatMap((m) =>
       meridianCode: m.code,
       color: m.color,
     };
+    const pos = SURFACE_CODES.has(p.code) ? snapToSkin(p.pos) : p.pos;
     if (p.midline) {
-      return [{ ...base, side: "M" as const, key: `${m.id}-${p.code}-M` }];
+      return [{ ...base, pos, side: "M" as const, key: `${m.id}-${p.code}-M` }];
     }
-    const [x, y, z] = p.pos;
+    const [x, y, z] = pos;
     return [
       { ...base, side: "R" as const, key: `${m.id}-${p.code}-R`, pos: [x, y, z] as Vec3 },
       { ...base, side: "L" as const, key: `${m.id}-${p.code}-L`, pos: [x, y, -z] as Vec3 },
