@@ -13,9 +13,10 @@ export function DogBody({ opacity }: Props) {
   const material = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
-        color: new THREE.Color("#cbbfa8"),
-        roughness: 0.62,
-        metalness: 0.06,
+        color: new THREE.Color("#d8cdb6"),
+        roughness: 0.75,
+        metalness: 0.02,
+        side: THREE.DoubleSide,
         transparent: true,
         opacity,
         depthWrite: opacity > 0.85,
