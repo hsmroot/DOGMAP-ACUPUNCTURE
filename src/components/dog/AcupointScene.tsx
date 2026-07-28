@@ -128,7 +128,7 @@ export function AcupointScene({
 
   return (
     <Canvas
-      camera={{ position: [4.4, 3.4, 6.2], fov: 42 }}
+      camera={{ position: [5.2, 2.6, 9.2], fov: 40 }}
       dpr={[1, 2]}
       onPointerMissed={() => onSelect(null)}
     >
@@ -141,7 +141,7 @@ export function AcupointScene({
         <Environment preset="studio" environmentIntensity={0.35} />
       </Suspense>
 
-      <group position={[0, -1.1, 0]}>
+      <group position={[-0.2, -1.5, 0]}>
         <DogBody opacity={bodyOpacity} />
         {showPaths && <MeridianPaths activeIds={activeIds} />}
         {visible.map((p) => (
@@ -162,10 +162,10 @@ export function AcupointScene({
 
       <OrbitControls
         makeDefault
-        target={[0, 0.6, 0]}
+        target={[0, 0.15, 0]}
         enablePan={false}
-        minDistance={3}
-        maxDistance={16}
+        minDistance={3.5}
+        maxDistance={18}
         maxPolarAngle={Math.PI / 1.9}
         autoRotate={!selected}
         autoRotateSpeed={0.35}
