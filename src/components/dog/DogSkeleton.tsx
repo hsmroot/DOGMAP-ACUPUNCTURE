@@ -1,5 +1,6 @@
 import { useLayoutEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
+import { trunkAt } from "./anatomy";
 
 interface Props {
   opacity?: number;
@@ -29,22 +30,16 @@ function Bone({
   );
 }
 
-function Rib({
-  x,
-  scale,
-  drop,
-}: {
-  x: number;
-  scale: number;
-  drop: number;
-}) {
+/** Rib that hugs the real trunk cross-section at its own station. */
+function Rib({ x, floating }: { x: number; floating: boolean }) {
+  const s = trunkAt(x);
   const half = (sign: number) =>
     [
-      [x, 1.95, 0.05 * sign],
-      [x, 1.86, 0.42 * scale * sign],
-      [x - 0.05, 1.55, 0.52 * scale * sign],
-      [x - 0.08, 1.22 + drop, 0.34 * scale * sign],
-      [x - 0.08, 1.1 + drop, 0.08 * sign],
+      [x, s.cy + s.ry - 0.07, 0.05 * sign],
+      [x, s.cy + s.ry * 0.6, s.rz * 0.62 * sign],
+      [x - 0.04, s.cy, s.rz * 0.85 * sign],
+      [x - 0.09, s.cy - s.ry * 0.6, s.rz * (floating ? 0.72 : 0.6) * sign],
+      [x - 0.13, s.cy - s.ry + (floating ? 0.22 : 0.1), (floating ? 0.3 : 0.12) * sign],
     ] as [number, number, number][];
 
   return (
