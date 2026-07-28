@@ -60,18 +60,18 @@ export function DogOrgans({ opacity = 0.95 }: Props) {
   const bladder = useMemo(() => organMat("#d9c26f", opacity * 0.9, 0.25), [opacity]);
   const spleen = useMemo(() => organMat("#6c2440", opacity, 0.35), [opacity]);
 
-  const smallIntestine = useIntestine(3.4, 0.3, 0.075, [-0.15, 1.4, 0], [1.5, 1, 0.9], 0.7);
+  const smallIntestine = useIntestine(3.4, 0.26, 0.07, [-0.4, 1.55, 0], [1.7, 1, 0.95], 0.7);
   const colonGeom = useMemo(() => {
     const curve = new THREE.CatmullRomCurve3(
       [
-        [-0.9, 1.28, 0.3],
-        [0.35, 1.22, 0.34],
-        [0.55, 1.62, 0.16],
-        [0.2, 1.72, -0.02],
-        [-0.55, 1.68, -0.2],
-        [-0.95, 1.5, -0.22],
-        [-1.15, 1.35, -0.05],
-        [-1.35, 1.3, 0],
+        [-0.9, 1.32, 0.28],
+        [0.2, 1.3, 0.3],
+        [0.4, 1.66, 0.14],
+        [0.1, 1.76, -0.02],
+        [-0.55, 1.72, -0.2],
+        [-0.95, 1.6, -0.2],
+        [-1.2, 1.52, -0.05],
+        [-1.45, 1.5, 0],
       ].map((p) => new THREE.Vector3(...(p as [number, number, number]))),
     );
     return new THREE.TubeGeometry(curve, 160, 0.1, 12, false);
@@ -165,7 +165,7 @@ export function DogOrgans({ opacity = 0.95 }: Props) {
       ))}
 
       {/* bladder */}
-      <mesh position={[-1.15, 1.2, 0]} scale={[1.15, 0.95, 1]} material={bladder}>
+      <mesh position={[-1.15, 1.38, 0]} scale={[1.15, 0.95, 1]} material={bladder}>
         <sphereGeometry args={[0.16, 16, 12]} />
       </mesh>
     </group>
