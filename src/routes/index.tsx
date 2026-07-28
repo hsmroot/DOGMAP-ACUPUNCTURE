@@ -34,6 +34,7 @@ function Index() {
   const [hovered, setHovered] = useState<FlatPoint | null>(null);
   const [bodyOpacity, setBodyOpacity] = useState(0.34);
   const [showSkeleton, setShowSkeleton] = useState(true);
+  const [showOrgans, setShowOrgans] = useState(true);
   const [showPaths, setShowPaths] = useState(true);
   const [showLabels, setShowLabels] = useState(false);
   const [query, setQuery] = useState("");
@@ -123,6 +124,15 @@ function Index() {
             <label className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
+                checked={showOrgans}
+                onChange={(e) => setShowOrgans(e.target.checked)}
+                className="accent-primary"
+              />
+              Show organs
+            </label>
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
                 checked={showPaths}
                 onChange={(e) => setShowPaths(e.target.checked)}
                 className="accent-primary"
@@ -174,6 +184,7 @@ function Index() {
               showPaths={showPaths}
               showLabels={showLabels}
               showSkeleton={showSkeleton}
+              showOrgans={showOrgans}
             />
           </Suspense>
           <div className="pointer-events-none absolute bottom-3 left-4 rule-label">
