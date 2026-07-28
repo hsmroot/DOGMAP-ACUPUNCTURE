@@ -226,8 +226,8 @@ export function DogSkeleton({ opacity = 1 }: Props) {
       <group ref={root}>
         {/* spine */}
         <mesh geometry={spineGeom} />
-        {spinePts.slice(1, -1).map((p, i) => (
-          <Vertebra key={`v${i}`} x={p[0]} y={p[1]} r={i > 6 ? 0.06 : 0.085} />
+        {vertebrae.map((v, i) => (
+          <Vertebra key={`v${i}`} pos={v.p} r={v.r} spine={v.spine} />
         ))}
 
         {/* ribcage */}
@@ -271,20 +271,6 @@ export function DogSkeleton({ opacity = 1 }: Props) {
             <torusGeometry args={[0.075, 0.022, 8, 14]} />
           </mesh>
         ))}
-
-        {/* tail vertebrae */}
-        {Array.from({ length: 7 }).map((_, i) => {
-          const t = i / 6;
-          return (
-            <mesh
-              key={`t${i}`}
-              position={[-2.05 - t * 0.72, 1.82 + t * 0.62, 0]}
-              scale={1 - t * 0.4}
-            >
-              <sphereGeometry args={[0.055, 10, 8]} />
-            </mesh>
-          );
-        })}
 
         {/* limbs */}
         {[0.42, -0.42].map((z) =>
