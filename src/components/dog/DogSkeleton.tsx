@@ -178,17 +178,15 @@ export function DogSkeleton({ opacity = 1 }: Props) {
   );
 
   const sternumGeom = useTube(
-    [
-      [1.42, 1.12, 0],
-      [1.0, 1.05, 0],
-      [0.55, 1.06, 0],
-      [0.2, 1.12, 0],
-    ],
+    [1.45, 1.15, 0.85, 0.55, 0.3].map(
+      (x) => [x, trunkAt(x).cy - trunkAt(x).ry + 0.1, 0] as [number, number, number],
+    ),
     0.045,
     8,
   );
 
-  const ribs = [1.2, 0.95, 0.7, 0.45, 0.2, -0.05, -0.3, -0.55, -0.8];
+  // 13 pairs of ribs, T1 → T13, matching canine anatomy
+  const ribs = Array.from({ length: 13 }, (_, i) => 1.3 - i * 0.1375);
 
   const legBones = (
     x: number,
